@@ -10,7 +10,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
@@ -20,12 +20,8 @@
 (setq make-backup-files nil)
 (save-place-mode 1)
 
-
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'no-error)
-
-(setq show-paren-delay 0)
-(show-paren-mode 1)
 
 (global-subword-mode 1)
 
@@ -41,6 +37,7 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
+(setq use-package-always-ensure t)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -49,48 +46,59 @@
   (require 'use-package))
 
 
-(use-package color-theme-sanityinc-tomorrow :ensure t)
+;; (use-package color-theme-sanityinc-tomorrow :ensure t)
 (use-package gruvbox-theme :ensure t)
 (load-theme 'gruvbox t)
 
-(setq uniquify-buffer-name-style 'forward)
-(require 'uniquify)
+(use-package paren
+  :init
+  (setq show-paren-delay 0)
+  (setq show-paren-style 'parenthesis)
+  :config
+  (show-paren-mode 1))
+
+(use-package uniquify
+  :ensure nil
+  :init
+  (setq uniquify-buffer-name-style 'forward))
 
 (use-package linum
-  :ensure t
   :config
   (linum-mode)
 
   (use-package linum-relative
-    :ensure t
-    :config
+    :init
     (setq linum-relative-current-symbol "")
+    :config
     (linum-relative-global-mode)))
 
 
 (use-package evil
-  :ensure t
+  :init
+  (setq evil-move-cursor-back t)
   :config
   (evil-mode 1)
-  (setq evil-move-cursor-back nil)
 
   ;; Doesn't work, not sure how to use evil in customize
   ;; (evil-set-initial-state 'custom 'normal)
 
   ;; (evil-set-initial-state 'NeoTree 'emacs)
-  (evil-define-key 'normal neotree-mode-map (kbd "o") 'neotree-enter)
-  (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
-  (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
-  (evil-define-key 'normal neotree-mode-map (kbd "C") 'neotree-change-root)
-  (evil-define-key 'normal neotree-mode-map (kbd "U") 'neotree-select-up-node)
-  (evil-define-key 'normal neotree-mode-map (kbd "R") 'neotree-refresh)
-  (evil-define-key 'normal neotree-mode-map (kbd "I") 'neotree-hidden-file-toggle)
-  (evil-define-key 'normal neotree-mode-map (kbd "-") 'neotree-select-up-node)
+  (evil-define-key 'normal neotree-mode-map
+    (kbd "RET") 'neotree-enter
+    (kbd "o") 'neotree-enter
+    (kbd "q") 'neotree-hide
+    (kbd "C") 'neotree-change-root
+    (kbd "U") 'neotree-select-up-node
+    (kbd "R") 'neotree-refresh
+    (kbd "I") 'neotree-hidden-file-toggle
+    (kbd "-") 'neotree-select-up-node
+    (kbd "M-n") 'neotree-create-node
+    (kbd "M-c") 'neotree-copy-node
+    (kbd "M-d") 'neotree-delete-node
+    (kbd "M-m") 'neotree-rename-node
+    )
+
   (define-key evil-motion-state-map (kbd "-") 'neotree-find)
-  (evil-define-key 'normal neotree-mode-map (kbd "M-n") 'neotree-create-node)
-  (evil-define-key 'normal neotree-mode-map (kbd "M-c") 'neotree-copy-node)
-  (evil-define-key 'normal neotree-mode-map (kbd "M-d") 'neotree-delete-node)
-  (evil-define-key 'normal neotree-mode-map (kbd "M-m") 'neotree-rename-node)
 
   (define-key evil-normal-state-map (kbd "s") nil)
   (define-key evil-normal-state-map (kbd "\C-t") nil)
@@ -113,9 +121,9 @@
   (global-set-key (kbd "C-s") 'evil-window-right)
 
   (use-package evil-leader
-    :ensure t
-    :config
+    :init
     (setq evil-leader/in-all-states t)
+    :config
     (global-evil-leader-mode)
     (evil-leader/set-leader "<SPC>")
     (evil-leader/set-key
@@ -138,34 +146,35 @@
       "wc" 'evil-window-delete))
 
   (use-package evil-surround
-    :ensure t
     :config
     (global-evil-surround-mode)))
 
 
 (use-package helm
-  :ensure t
+  :init
+  (setq helm-M-x-fuzzy-match t)
   :config
   (helm-mode 1)
-  (setq helm-M-x-fuzzy-match t)
   (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-  (define-key helm-map (kbd "<backtab>") 'helm-select-action))
+  (define-key helm-map (kbd "<backtab>") 'helm-select-action)
 
-(use-package helm-ag
-  :ensure t)
-
-(use-package helm-projectile
-  :ensure t)
+  (use-package helm-ag)
+  (use-package helm-projectile))
 
 
 (use-package flycheck
-  :ensure t
   :config
   (add-hook 'after-init-hook 'global-flycheck-mode))
 
 
-(use-package magit
-  :ensure t)
+(use-package magit)
+
+
+;; Installing org-plus-contrib as a lazy workaround for the built-in older org-mode
+;; https://github.com/jwiegley/use-package/issues/319
+(use-package org-plus-contrib)
+
+(use-package adaptive-wrap)
 
 
 (defvar mode-line-directory
@@ -201,6 +210,12 @@
 (defface my-pl-segment1-inactive
   '((t (:foreground "#ebdbb2" :background "#3c3836")))
   "Powerline first segment inactive face.")
+(defface my-pl-segment15-active
+  '((t (:foreground "#282828" :background "#bdae93")))
+  "Powerline first segment active face.")
+(defface my-pl-segment15-inactive
+  '((t (:foreground "#ebdbb2" :background "#3c3836")))
+  "Powerline first segment inactive face.")
 (defface my-pl-segment2-active
   '((t (:foreground "#ebdbb2" :background "#504945")))
   "Powerline second segment active face.")
@@ -225,11 +240,9 @@
                   (:eval
                    (let* ((active (powerline-selected-window-active))
                           (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
+                          (seg15 (if active 'my-pl-segment15-active 'my-pl-segment15-inactive))
                           (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
                           (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
-                          ;; (mode-line (if active 'mode-line 'mode-line-inactive))
-                          ;; (face1 (if active 'powerline-active1 'powerline-inactive1))
-                          ;; (face2 (if active 'powerline-active2 'powerline-inactive2))
                           (separator-left (intern (format "powerline-%s-%s"
                                                           (powerline-current-separator)
                                                           (car powerline-default-separator-dir))))
@@ -251,10 +264,13 @@
                                        (powerline-raw " " seg1))
                                      (when (and vc-mode buffer-file-name)
                                        (let ((backend (vc-backend buffer-file-name)))
-                                         (when backend
-                                           (concat (powerline-raw "[" seg3 'l)
-                                                   (powerline-raw (format "%s / %s" backend (vc-working-revision buffer-file-name backend)))
-                                                   (powerline-raw "]" seg3)))))
+                                         (pcase backend
+                                           ('Git (powerline-raw (format "  %s " (car (vc-git-branches))) seg1)))))
+                                         ;; Below is the way I _want_ this to work; branch in a different segment with separators, but I can't seem to make the funcalls work inside the concat for some reason
+                                         ;; (concat (funcall separator-left seg1 seg15)
+                                         ;;         (pcase backend
+                                         ;;           ('Git (powerline-raw (format "   %s " (car (vc-git-branches))) seg1)))
+                                         ;;         (funcall separator-left seg15 seg2))))
                                      (funcall separator-left seg1 seg2)
                                      (powerline-raw "[" seg2 'l)
                                      (powerline-major-mode seg2)
@@ -282,14 +298,12 @@
                              (powerline-render rhs)))))))
 
 (use-package powerline
-  :ensure t
-  :config
+  :init
   (setq powerline-default-separator 'slant)
-
+  :config
   (column-number-mode 1)
 
   (use-package powerline-evil
-    :ensure t
     :config
     (neh-powerline-theme)
     (custom-theme-set-faces
@@ -305,8 +319,7 @@
 
 
 (use-package neotree
-  :ensure t
-  :config
+  :init
   (setq neo-theme 'arrow))
 
 
