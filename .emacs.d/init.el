@@ -97,10 +97,13 @@
   (setq-local comment-auto-fill-only-comments t)
   (auto-fill-mode 1))
 
-(auto-fill-mode 1)
-(setq fill-column 80)
+;; (auto-fill-mode 1)
+(setq-default fill-column 80)
 (setq comment-auto-fill-only-comments t)
 (setq-default auto-fill-function 'do-auto-fill)
+
+;; uses the fill-column setting for visual-line-mode
+(use-package visual-fill-column)
 
 (use-package whitespace
   :init
@@ -434,7 +437,8 @@
   (setq org-hide-emphasis-markers t)
   (setq org-todo-keywords
         '((sequence "TODO" "INPROGRESS" "|" "DONE" "CANCELED")))
-  (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (add-hook 'org-mode-hook 'visual-fill-column-mode)
   )
 (use-package org-evil
   ;; :general
