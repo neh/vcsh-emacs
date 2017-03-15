@@ -190,6 +190,8 @@
     "sf" '(counsel-ag :which-key "search files")
     "sh" '(counsel-grep-or-swiper :which-key "search buffer")
 
+    "v" '(:ignore t :which-key "view")
+
     "x" '(:ignore t :which-key "execute")
     "xa" '(ivy-resume :which-key "ivy resume")
     "xb" '(eval-buffer :which-key "eval buffer")
@@ -467,7 +469,7 @@
    :states '(normal visual insert emacs)
    :prefix "SPC"
    :non-normal-prefix "M-SPC"
-   "wd" '(darkroom-tentative-mode :which-key "darkroom")
+   "vd" '(darkroom-tentative-mode :which-key "darkroom")
    )
   )
 
