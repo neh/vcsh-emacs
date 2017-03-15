@@ -249,12 +249,10 @@
 (use-package avy
   :general
   (general-define-key
-   :states '(normal visual insert emacs)
-   :prefix "SPC"
-   :non-normal-prefix "M-SPC"
-   "j" '(:ignore t :which-key "jump")
-   "jl" '(avy-goto-line :which-key "line")
-   "jc" '(avy-goto-char :which-key "char")
+   :states '(normal visual)
+   :prefix "j"
+   "l" '(avy-goto-line :which-key "line")
+   "c" '(avy-goto-char-2 :which-key "char")
    )
   :config
   (setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
