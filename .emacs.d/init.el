@@ -321,6 +321,8 @@
        ("b" counsel-find-file-cd-bookmark-action "cd bookmark")))
     )
   )
+(use-package hydra)
+(use-package ivy-hydra)
 
 (use-package ace-window
   :general
