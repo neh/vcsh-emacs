@@ -140,14 +140,6 @@
 (use-package general
   :config
   (general-define-key
-   ;; "C-e" '(mode-line-other-buffer :which-key "prevbuf")
-   "C-h" 'evil-window-left
-   "C-t" 'evil-window-down
-   "C-n" 'evil-window-up
-   "C-s" 'evil-window-right
-   )
-
-  (general-define-key
    :states '(normal visual insert emacs)
    :prefix "SPC"
    :non-normal-prefix "M-SPC"
@@ -197,10 +189,6 @@
     "sa" '(swiper-all :which-key "search all buffers")
     "sf" '(counsel-ag :which-key "search files")
     "sh" '(counsel-grep-or-swiper :which-key "search buffer")
-
-    "w" '(:ignore t :which-key "window")
-    "wc" '(evil-window-delete :which-key "close window")
-    "wo" '(delete-other-windows :which-key "close other windows")
 
     "x" '(:ignore t :which-key "execute")
     "xa" '(ivy-resume :which-key "ivy resume")
@@ -333,6 +321,21 @@
        ("b" counsel-find-file-cd-bookmark-action "cd bookmark")))
     )
   )
+
+(use-package ace-window
+  :general
+  (general-define-key
+   :states '(normal motion emacs)
+   :prefix "SPC"
+   "w" '(:ignore t :which-key "window")
+   "ww" 'ace-window
+   "wc" '(evil-window-delete :which-key "close window")
+   "wo" '(delete-other-windows :which-key "close other windows")
+   )
+  :config
+  (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s)))
+
+
 (use-package validate
   :demand t)
 
