@@ -329,13 +329,21 @@
   (general-define-key
    :states '(normal motion emacs)
    :prefix "SPC"
-   "w" '(:ignore t :which-key "window")
-   "ww" 'ace-window
-   "wc" '(evil-window-delete :which-key "close window")
-   "wo" '(delete-other-windows :which-key "close other windows")
+   "w" 'ace-window
    )
   :config
-  (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s)))
+  (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s)
+        aw-dispatch-always t
+        aw-dispatch-alist
+        '((?d aw-delete-window " Ace - Delete Window")
+          (?m aw-swap-window " Ace - Swap Window")
+          (?M aw-move-window " Ace - Move Window")
+          (?w aw-flip-window)
+          (?c aw-split-window-fair " Ace - Split Fair Window")
+          (?v aw-split-window-vert " Ace - Split Vert Window")
+          (?b aw-split-window-horz " Ace - Split Horz Window")
+          (?x delete-other-windows " Ace - Maximize Window"))
+        ))
 
 
 (use-package validate
